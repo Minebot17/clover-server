@@ -106,13 +106,33 @@ public class CloverBridge {
     }
 
     // Only for call from outer threads
-    public void startNewGame() {
-        // TODO
+    public void startNewCustomGame(String context, String prompt, String saveName) {
+        isAwaiting = true;
+        enterInput("1");
+        waitForNextInputWait();
+        enterInput(context);
+        waitForNextInputWait();
+        enterInput(prompt);
+        waitForNextInputWait();
+        enterInput(saveName);
+        waitForNextInputWait();
+        isAwaiting = false;
+        inGame = true;
     }
 
     // Only for call from outer threads
-    public void startNewCustomGame() {
-        // TODO
+    public void startNewGame(int folderIndex, int subFolderIndex, String saveName) {
+        isAwaiting = true;
+        enterInput("0");
+        waitForNextInputWait();
+        enterInput(folderIndex + 1 + "");
+        waitForNextInputWait();
+        enterInput(subFolderIndex + 1 + "");
+        waitForNextInputWait();
+        enterInput(saveName);
+        waitForNextInputWait();
+        isAwaiting = false;
+        inGame = true;
     }
 
     // Only for call from outer threads
@@ -196,6 +216,8 @@ public class CloverBridge {
                     if (i != 0 && i != args.length - 1)
                         savedGames.add(args[i].substring(closeBracketIndex + 2));
                 }
+                return waitForInput();
+            case "preset_select":
                 return waitForInput();
             case "action":
                 lastMessage = args[0];

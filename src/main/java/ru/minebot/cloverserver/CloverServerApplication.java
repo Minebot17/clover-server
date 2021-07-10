@@ -17,34 +17,5 @@ public class CloverServerApplication {
 		cloverBridge = new CloverBridge();
 		new Thread(() -> cloverBridge.initialize()).start();
 		SpringApplication.run(CloverServerApplication.class, args);
-
-		// Debug
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		PrintStream outStream = System.out;
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		new Thread(() -> {
-			cloverBridge.launch();
-			cloverBridge.waitForNextInputWait();
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
-			cloverBridge.loadGame("kk");
-			System.setOut(outStream);
-			System.out.println(cloverBridge.getLastMessage());
-			System.out.println("Hello0");
-			cloverBridge.sendResponse("Hello0");
-			System.out.println(cloverBridge.getLastMessage());
-			System.out.println("Hello1");
-			cloverBridge.sendResponse("Hello1");
-			System.out.println(cloverBridge.getLastMessage());
-		}).start();
 	}
 }
