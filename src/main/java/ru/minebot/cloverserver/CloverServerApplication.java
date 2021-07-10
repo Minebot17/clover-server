@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 @SpringBootApplication
 public class CloverServerApplication {
@@ -24,6 +25,7 @@ public class CloverServerApplication {
 			e.printStackTrace();
 		}
 
+		PrintStream outStream = System.out;
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		new Thread(() -> {
 			cloverBridge.launch();
@@ -33,7 +35,16 @@ public class CloverServerApplication {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			cloverBridge.reload();
+
+			cloverBridge.loadGame("kk");
+			System.setOut(outStream);
+			System.out.println(cloverBridge.getLastMessage());
+			System.out.println("Hello0");
+			cloverBridge.sendResponse("Hello0");
+			System.out.println(cloverBridge.getLastMessage());
+			System.out.println("Hello1");
+			cloverBridge.sendResponse("Hello1");
+			System.out.println(cloverBridge.getLastMessage());
 		}).start();
 	}
 }

@@ -28,6 +28,7 @@ public class CloverBridge {
     private boolean isAwaiting;
     private boolean inGame;
     private String lastInput;
+    private String lastMessage;
     private List<String> savedGames;
 
     public void initialize() {
@@ -116,12 +117,21 @@ public class CloverBridge {
 
     // Only for call from outer threads
     public void loadGame(String saveName) {
+        isAwaiting = true;
+        enterInput("2");
+        waitForNextInputWait();
         enterInput(savedGames.indexOf(saveName) + 1 + "");
+        waitForNextInputWait();
+        isAwaiting = false;
+        inGame = true;
     }
 
     // Only for call from outer threads
-    public void sendResponse() {
-        // TODO
+    public void sendResponse(String message) {
+        isAwaiting = true;
+        enterInput(message);
+        waitForNextInputWait();
+        isAwaiting = false;
     }
 
     // Only for call from outer threads
@@ -150,7 +160,7 @@ public class CloverBridge {
     }
 
     public boolean isConnected() {
-        return isAwaiting || socket.isConnected() && !socket.isClosed();
+        return socket.isConnected() && !socket.isClosed();
     }
 
     public boolean isAwaiting() {
@@ -163,6 +173,10 @@ public class CloverBridge {
 
     public List<Map<String, Object>> getPresets() {
         return Presets.maps;
+    }
+
+    public String getLastMessage() {
+        return lastMessage;
     }
 
     private String handleMessage(String message, String[] args) throws Exception {
@@ -182,7 +196,9 @@ public class CloverBridge {
                     if (i != 0 && i != args.length - 1)
                         savedGames.add(args[i].substring(closeBracketIndex + 2));
                 }
-                System.out.println(String.join(",", savedGames));
+                return waitForInput();
+            case "action":
+                lastMessage = args[0];
                 return waitForInput();
             default:
                 throw new Exception("Undefined message " + message);
